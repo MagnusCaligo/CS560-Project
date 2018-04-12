@@ -2,6 +2,7 @@ import math
 import cv2
 import numpy as np
 
+size = 10
 
 class Hexigon:
     def __init__(self):
@@ -65,7 +66,7 @@ class HexMap:
     def __init__(self):
         self.hexagons = []
 
-        for i in range(233):
+        for i in range(size):
             self.hexagons.append(Hexigon())
 
         for i,v in enumerate(self.hexagons):
@@ -75,11 +76,11 @@ class HexMap:
                 v.topHex = self.hexagons[i-15]
             if i - 7 >= 0:
                 v.topRightHex = self.hexagons[i-7]
-            if i + 8 < 233:
+            if i + 8 < size:
                 v.botRightHex = self.hexagons[i+8]
-            if i +15 < 233:
+            if i +15 < size:
                 v.botHex = self.hexagons[i+15]
-            if i + 7 < 233:
+            if i + 7 < size:
                 v.botLeftHex = self.hexagons[i+7]
 
 
