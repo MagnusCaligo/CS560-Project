@@ -19,18 +19,20 @@ class Hexigon:
     def drawHex(self, image, x, y, distance):
         if self.drawn == True:
             return
+        w, h, c = image.shape
+        height = h - y
         cv2.circle(image, (int(x),int(y)), 20, (0,0,0), -1)
 
         if x == 50 and y == 50:
-            cv2.circle(image, (int(x),int(y)), 20, (255, 0,0), -1)
+            cv2.circle(image, (int(x),int(height)), 20, (255, 0,0), -1)
 
         self.drawn = True
 
         locations = []
-        angle = 180
+        angle = 150
         for i in range(6):
             locations.append(((distance*math.cos(math.radians(angle))) + x, 
-                (distance *math.sin(math.radians(angle))) + y))
+                (distance *math.sin(math.radians(angle + 180))) + y))
             angle += 60
 
         #for i in locations:
@@ -48,7 +50,8 @@ class Hexigon:
         for i, hex in enumerate(self.references):
             if hex == None:
                 continue
-            #hex.drawHex(image, locations[i][0], locations[i][1], distance )
+            height = h - locations[i][1]
+            hex.drawHex(image, locations[i][0], locations[i][0], distance )
 
 
 
@@ -77,7 +80,7 @@ class HexMap:
 
 
     def drawHexes(self):
-        image = np.zeros((640,480,3), np.uint8)
+        image = np.zeros((1200,1600,3), np.uint8)
         image[:, :] = (255, 255,255)
 
         distance = 50
