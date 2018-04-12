@@ -15,24 +15,26 @@ class Hexigon:
 
         self.value = 0
         self.drawn = False
+        self.size = 10
+        self.distance = 25
 
-    def drawHex(self, image, x, y, distance):
+    def drawHex(self, image, x, y):
         if self.drawn == True:
             return
         w, h, c = image.shape
         height = h - y
-        cv2.circle(image, (int(x),int(y)), 20, (0,0,0), -1)
+        cv2.circle(image, (int(x),int(y)), self.size, (0,0,0), -1)
 
         if x == 50 and y == 50:
-            cv2.circle(image, (int(x),int(height)), 20, (255, 0,0), -1)
+            cv2.circle(image, (int(x),int(height)), self.size, (255, 0,0), -1)
 
         self.drawn = True
 
         locations = []
         angle = 150
         for i in range(6):
-            locations.append(((distance*math.cos(math.radians(angle))) + x, 
-                (distance *math.sin(math.radians(angle + 180))) + y))
+            locations.append(((self.distance*math.cos(math.radians(angle))) + x, 
+                (self.distance *math.sin(math.radians(angle + 180))) + y))
             angle += 60
 
         #for i in locations:
@@ -50,8 +52,10 @@ class Hexigon:
         for i, hex in enumerate(self.references):
             if hex == None:
                 continue
+            if i == 2:
+                pass
             height = h - locations[i][1]
-            hex.drawHex(image, locations[i][0], locations[i][0], distance )
+            hex.drawHex(image, locations[i][0], locations[i][0])
 
 
 
@@ -80,11 +84,13 @@ class HexMap:
 
 
     def drawHexes(self):
-        image = np.zeros((1200,1600,3), np.uint8)
+        image = np.zeros((480,640,3), np.uint8)
         image[:, :] = (255, 255,255)
+        
+        cv2.namedWindow("Test", cv2.WINDOW_AUTOSIZE)
 
-        distance = 50
-        self.hexagons[0].drawHex(image, 50, 50, distance)
+        
+        self.hexagons[0].drawHex(image, 50, 50)
 
         while True:
             cv2.imshow("Test", image)
