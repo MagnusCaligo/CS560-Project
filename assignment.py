@@ -7,7 +7,7 @@ import sys
 
 size = 233
 
-class Hexigon:
+class Hexagon:
     def __init__(self):
         self.topLeftHex = None
         self.topHex = None
@@ -17,28 +17,17 @@ class Hexigon:
         self.botLeftHex = None
 
 
-        self.index = 0
-        self.value = 0
-        self.visited = False
-        self.totalValue = 999999
-        self.previousNode = None
+        self.index = 0 # each hexagon has an index. start at zero.
+        self.value = 0 # the cost of traveling to this hexagon from a neighbor.
+        self.visited = False # after checking all of this hexagon's neighbors, it has been visited.
+        self.totalValue = 999999 # an initial value for comparison for the first total path value
+        self.previousNode = None # since each path is a linked list, we need to be able to backtrack to the previous node
         
         
         self.drawn = False
         self.size = 20
         self.distance = 50
         
-    def getLengthOfSnake(self, up):
-        if up:
-            if self.topLeftHex == None:
-                return 1
-            else:
-                return self.topLeftHex.getLengthOfSnake(False)
-        else:
-            if self.botLeftHex == None:
-                return 1
-            else:
-                return self.botLeftHex.getLengthOfSnake(True)
 
     def drawHex(self, image, x, y, shortestPath):
         if self.drawn == True:
@@ -71,10 +60,7 @@ class Hexigon:
             locations.append(((self.distance*math.cos(math.radians(angle))) + x, 
                 (self.distance *math.sin(math.radians(angle + 180))) + y))
             angle -= 60
-
-        #for i in locations:
-        #    cv2.circle(image, (int(i[0]), int(i[1])), 20, (0,0,0), -1)
-
+            
         self.references = [
             self.topLeftHex, 
             self.topHex, 
@@ -101,37 +87,39 @@ class HexMap:
 
     def __init__(self):
         self.hexagons = []
-        self.shortestPath = []
+        self.shortestPath = [] # will be the linked list of the indices of the shortest path of hexagons.
 
         for i in range(size):
-            self.hexagons.append(Hexigon())
-            self.hexagons[i].value = random.randrange(-1,5,1)
-            self.hexagons[i].index = i
+            self.hexagons.append(Hexagon())
+            self.hexagons[i].value = random.randrange(-1,5,1) # RANDOM VALUE GENERATED. adds a new hexagon.
+            self.hexagons[i].index = i # give that hexagon an index
 
+		# assign the neighbors of the current hexagon.
         for i,v in enumerate(self.hexagons):
-            if i - 8 >= 0 and (i-15)%15 != 0:
-                v.topLeftHex = self.hexagons[i-8]
-            if i - 15 >= 0: 
-                v.topHex = self.hexagons[i-15]
-            if i - 7 >= 0:
-                v.topRightHex = self.hexagons[i-7]
-            if i + 8 < size:
-                v.botRightHex = self.hexagons[i+8]
-            if i +15 < size:
-                v.botHex = self.hexagons[i+15]
-            if i + 7 < size and (i)%15 != 0:
-                v.botLeftHex = self.hexagons[i+7]
+            if i - 8 >= 0 and (i-15)%15 != 0: # if the current hexagon is in the top row, or the left column, don't set a top left neighbor
+                v.topLeftHex = self.hexagons[i-8] # set the top left neighbor
+            if i - 15 >= 0: # if the current hexagon is in the top row, don't set a top neighbor
+                v.topHex = self.hexagons[i-15] # set the top neighbor
+            if i - 7 >= 0: # if the current hexagon is in the top row, don't set a top right neighbor
+                v.topRightHex = self.hexagons[i-7] # set the top right neighbor
+            if i + 8 < size:  # if the current hexagon is in the bottom row, don't set a bottom right neighbor
+                v.botRightHex = self.hexagons[i+8] # set the bottom right neighbor
+            if i +15 < size: # if the current hexagon is on the bottom row, don't set a bottom neighbor
+                v.botHex = self.hexagons[i+15] # set bottom neighbor
+            if i + 7 < size and (i)%15 != 0: # if the current hexagon is on the bottom row or left column, don't set a bottom neighbor
+                v.botLeftHex = self.hexagons[i+7] # set bottom left neighbor
                 
-            if (i-7)%15 == 0:
+            if (i-7)%15 == 0: # if the current hexagon is in the right column, don't set a top right and bottom right neighbor
                 v.topRightHex = None
                 v.botRightHex = None
-                
-        pass
+
     
     def findShortestPath(self):
         
+        # Find the smallest and non visited hexagon in the map
+        # This is so that all the paths grow at approximately the same pace
         def findSmallestNotVisited():
-            smallest = self.hexagons[7]
+            smallest = self.hexagons[7] # Set this as an initial comparison value
             for hex in self.hexagons:
                 if hex.visited == False and hex.totalValue < smallest.totalValue:
                     smallest = hex
@@ -142,13 +130,13 @@ class HexMap:
         current.totalValue = 0
         
         while True:
-            print "Looking at node", current.index
-            if current == self.hexagons[7]:
-                if current.previousNode == None: #Failed to find smallest; i.e. no more left in not visited
+            # print "Looking at node", current.index
+            if current == self.hexagons[7]: # if we've made it to the destination hexagon
+                if current.previousNode == None: # Failed to find smallest; i.e. no more left in not visited
                     return -1
                 else:
                     while True:
-                        print current.index
+                        # print current.index this prints the smallest path. shortestPath contains all the indeces of the shortest path
                         self.shortestPath.append(current.index)
                         current = current.previousNode
                         if current == None:
@@ -168,7 +156,7 @@ class HexMap:
             for neighbor in current.references:
                 if neighbor == None:
                     continue
-                if neighbor.value <0:
+                if neighbor.value < 0: # if neighbor is a -1, then we can't go through it
                     continue
                 tentativeValue = current.totalValue + neighbor.value
                 if tentativeValue < neighbor.totalValue:
