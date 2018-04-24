@@ -88,11 +88,21 @@ class HexMap:
     def __init__(self):
         self.hexagons = []
         self.shortestPath = [] # will be the linked list of the indices of the shortest path of hexagons.
+        inputFile = open('input.txt')
+        input = []
+		
+        for line in inputFile.readlines():
+            chomp = line.rstrip('\n')
+            input.append(chomp.split(" ")) # input is now an array of arrays, each array within input being a row from the file
 
-        for i in range(size):
+        i = 0
+        for row in input:
             self.hexagons.append(Hexagon())
-            self.hexagons[i].value = random.randrange(-1,5,1) # RANDOM VALUE GENERATED. adds a new hexagon.
-            self.hexagons[i].index = i # give that hexagon an index
+            self.hexagons[i].value = int(row[1])
+            self.hexagons[i].index = int(row[0])
+            i += 1
+			# self.hexagons[i].value = random.randrange(-1,5,1) # RANDOM VALUE GENERATED. adds a new hexagon.
+			# self.hexagons[i].index = i # give that hexagon an index
 
 		# assign the neighbors of the current hexagon.
         for i,v in enumerate(self.hexagons):
