@@ -138,20 +138,27 @@ class HexMap:
         current = self.hexagons[225]
         current.visited = True
         current.totalValue = 0
-        
+		
+        output = open("output.txt", "w") 
+		
         while True:
             # print "Looking at node", current.index
             if current == self.hexagons[7]: # if we've made it to the destination hexagon
                 if current.previousNode == None: # Failed to find smallest; i.e. no more left in not visited
                     return -1
                 else:
-		    print "Total Value is: ", current.totalValue
+                    cost = current.totalValue
                     while True:
-                        # print current.index this prints the smallest path. shortestPath contains all the indeces of the shortest path
-                        self.shortestPath.append(current.index)
+                        # print current.index  # this prints the smallest path. shortestPath contains all the indeces of the shortest path
+                        self.shortestPath.insert(0, current.index)
                         current = current.previousNode
                         if current == None:
                             break
+                    for node in self.shortestPath:
+                        output.write(str(node))
+                        output.write("\n")
+                    output.write("MINIMAL-COST PATH COSTS: %d" % (cost))
+                    output.close()
                     return 1
             
             current.references = [
@@ -176,7 +183,6 @@ class HexMap:
                     
             current.visited = True
             current = findSmallestNotVisited()
-        
 
 
     def drawHexes(self):
