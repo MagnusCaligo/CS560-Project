@@ -145,6 +145,7 @@ class HexMap:
                 if current.previousNode == None: # Failed to find smallest; i.e. no more left in not visited
                     return -1
                 else:
+		    print "Total Value is: ", current.totalValue
                     while True:
                         # print current.index this prints the smallest path. shortestPath contains all the indeces of the shortest path
                         self.shortestPath.append(current.index)
