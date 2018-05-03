@@ -97,6 +97,8 @@ class HexMap:
 
         i = 0
         for row in input:
+            if len(row) < 2:
+                continue
             self.hexagons.append(Hexagon())
             self.hexagons[i].value = int(row[1])
             self.hexagons[i].index = int(row[0])
@@ -137,7 +139,7 @@ class HexMap:
         
         current = self.hexagons[225]
         current.visited = True
-        current.totalValue = 0
+        current.totalValue = current.value
 		
         output = open("output.txt", "w") 
 		
